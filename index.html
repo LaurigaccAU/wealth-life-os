@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Wealth OS">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#F6F4EE">
+<title>Wealth & Life OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F4EE;
+  --panel:#FFFFFF;
+  --ink:#161C16;
+  --ink-soft:#5B6459;
+  --line:#E1DFD3;
+  --track:#EDEBE1;
+  --evergreen:#1B4332;
+  --evergreen-dim:#2D5A45;
+  --gold:#A9812F;
+  --gold-soft:#F1E6C8;
+  --danger:#9A3B3B;
+  --mono:'IBM Plex Mono',monospace;
+  --serif:'Fraunces',serif;
+}
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:'Inter',sans-serif;
+  touch-action:manipulation;
+  overflow-x:hidden;
+}
+input[type=checkbox]{accent-color:var(--evergreen);}
+.wrap{
+  max-width:920px;margin:0 auto;
+  padding:calc(28px + env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) calc(60px + env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:18px;margin-bottom:22px;}
+.hero h1{font-family:var(--serif);font-weight:700;font-size:32px;margin:0;letter-spacing:-0.01em;}
+.hero .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--evergreen);margin-bottom:4px;}
+.hero .date{font-family:var(--mono);font-size:12px;color:var(--ink-soft);}
+
+/* Tabs scroll sideways on their own, so the page itself never does */
+.tabs-wrap{position:relative;margin-bottom:20px;border-bottom:1px solid var(--line);}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{
+  flex:0 0 auto;white-space:nowrap;background:none;border:none;border-bottom:2px solid transparent;
+  font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;
+  padding:12px 16px;cursor:pointer;color:var(--ink-soft);
+}
+.tab.active{color:var(--evergreen);border-bottom-color:var(--evergreen);}
+.tabs-wrap::after{
+  content:'';position:absolute;right:0;top:0;bottom:1px;width:36px;pointer-events:none;
+  background:linear-gradient(to right, rgba(246,244,238,0), var(--bg));
+  opacity:0;transition:opacity .2s;
+}
+.tabs-wrap.more::after{opacity:1;}
+
+.panel{display:none;}
+.panel.active{display:block;}
+
+.grid{display:grid;gap:12px;margin-bottom:16px;}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr));}
+.grid-4{grid-template-columns:repeat(4,minmax(0,1fr));}
+.stat{background:var(--panel);border:1px solid var(--line);padding:16px;min-width:0;}
+.stat .k{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);}
+.stat .v{font-family:var(--serif);font-size:26px;font-weight:600;margin-top:6px;color:var(--evergreen);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.stat .v.neg{color:var(--danger);}
+.stat .sub{font-size:11px;color:var(--ink-soft);margin-top:4px;}
+
+.card{background:var(--panel);border:1px solid var(--line);padding:18px 20px;margin-bottom:16px;}
+.card h2{font-family:var(--serif);font-size:18px;margin:0 0 12px;font-weight:600;}
+.card p{font-size:13px;line-height:1.5;margin:0 0 10px;color:var(--ink-soft);}
+.row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);}
+.row:last-child{border-bottom:none;}
+.row label,.row .name{flex:1;font-size:13px;min-width:0;}
+.row .total{font-family:var(--mono);font-weight:600;font-size:13px;}
+input[type=text],input[type=number],input[type=date],select{
+  font-family:var(--mono);font-size:13px;border:1px solid var(--line);border-radius:0;
+  padding:7px 8px;background:#FCFBF8;color:var(--ink);-webkit-appearance:none;appearance:none;
+  min-height:36px;
+}
+input[type=date]{text-align:left;}
+input[type=date]::-webkit-date-and-time-value{text-align:left;}
+input:disabled{color:var(--ink-soft);background:var(--track);}
+select{padding-right:22px;background-image:linear-gradient(45deg,transparent 50%,var(--ink-soft) 50%),linear-gradient(135deg,var(--ink-soft) 50%,transparent 50%);background-position:calc(100% - 12px) 50%,calc(100% - 8px) 50%;background-size:4px 4px;background-repeat:no-repeat;}
+.row input[type=number]{width:120px;}
+.small-btn{
+  font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;
+  background:var(--evergreen);color:#fff;border:1px solid var(--evergreen);padding:8px 14px;cursor:pointer;
+}
+.small-btn.ghost{background:transparent;color:var(--evergreen);}
+.icon-btn{
+  flex:0 0 auto;width:34px;height:34px;display:inline-grid;place-items:center;
+  background:transparent;color:var(--danger);border:1px solid var(--danger);
+  font-size:15px;line-height:1;cursor:pointer;padding:0;
+}
+.add-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.add-row input[type=text]{flex:1 1 160px;min-width:0;}
+.add-row input[type=number],.add-row input[type=date]{flex:0 1 130px;min-width:0;}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
+.form-grid input,.form-grid select{width:100%;}
+.bar-track{background:var(--track);height:8px;overflow:hidden;}
+.bar-fill{background:var(--gold);height:100%;}
+.bar-fill.done{background:var(--evergreen);}
+.hint{font-size:11px;color:var(--ink-soft);margin-top:8px;font-style:italic;}
+.notice{background:var(--gold-soft);border:1px solid #E4D3A6;padding:12px 14px;font-size:13px;margin-bottom:16px;line-height:1.5;}
+.warn{color:var(--danger);font-weight:600;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.pct{font-family:var(--mono);text-align:right;font-size:12px;}
+.pill{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:12px;text-transform:uppercase;white-space:nowrap;}
+.status-complete,.type-income{background:#DCEEDF;color:var(--evergreen);}
+.status-ontrack{background:var(--gold-soft);color:#7C5F22;}
+.status-none{background:var(--track);color:var(--ink-soft);}
+.type-expense{background:#F3E0E0;color:var(--danger);}
+
+/* month / week switcher */
+.nav{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px;}
+.nav h2{margin:0;text-align:center;flex:1;}
+.nav .small-btn{flex:0 0 auto;}
+.nav .today-link{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--evergreen);background:none;border:none;cursor:pointer;margin:4px auto 0;padding:0;}
+
+/* transactions */
+.txn-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13px;}
+.txn-row:last-child{border-bottom:none;}
+.txn-main{flex:1;min-width:0;}
+.txn-sub{display:block;color:var(--ink-soft);font-size:11px;font-family:var(--mono);margin-top:2px;}
+.txn-amt{font-family:var(--mono);font-weight:600;text-align:right;white-space:nowrap;}
+.txn-amt.income{color:var(--evergreen);}
+.txn-amt.expense{color:var(--danger);}
+
+/* goals */
+.goal{border:1px solid var(--line);padding:14px;margin-bottom:10px;}
+.goal-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.goal-head strong{flex:1;min-width:0;font-size:14px;}
+.goal-meta{font-size:12px;color:var(--ink-soft);margin:8px 0 10px;line-height:1.5;}
+.goal-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;}
+.goal-fields label{display:flex;flex-direction:column;gap:4px;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);}
+.goal-fields input,.goal-fields select{width:100%;}
+
+/* habits: one line per habit on wide screens, two lines on phones */
+.hgrid{display:grid;grid-template-columns:minmax(0,1fr) repeat(7,36px) 44px 34px;grid-template-areas:"name d0 d1 d2 d3 d4 d5 d6 cnt del";column-gap:4px;row-gap:6px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line);}
+.hgrid:last-child{border-bottom:none;}
+.hgrid .c{display:flex;justify-content:center;}
+.hgrid .h-name{grid-area:name;font-size:13px;min-width:0;}
+.hgrid .h-cnt{grid-area:cnt;font-family:var(--mono);font-size:11px;color:var(--ink-soft);text-align:right;}
+.hgrid .h-del{grid-area:del;}
+.hgrid input[type=checkbox]{width:20px;height:20px;margin:0;}
+.hgrid.head{font-family:var(--mono);font-size:10px;color:var(--ink-soft);text-transform:uppercase;border-bottom:1px solid var(--line);}
+.hgrid.head .c{flex-direction:column;align-items:center;line-height:1.3;}
+.hgrid.head .c.today{color:var(--evergreen);font-weight:600;}
+.hgrid .c.today-col{background:#FBF6EA;border-radius:4px;padding:3px 0;}
+
+/* plans */
+.plan{border:1px solid var(--line);padding:14px;margin-bottom:12px;}
+.plan-line{font-size:14px;font-weight:500;margin-top:10px;line-height:1.4;}
+.plan .form-grid{margin-top:4px;}
+details{margin-top:12px;border-top:1px dashed var(--line);padding-top:6px;}
+summary{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--evergreen);cursor:pointer;list-style:none;padding:6px 0;}
+summary::-webkit-details-marker{display:none;}
+summary::before{content:'▸ ';}
+details[open] summary::before{content:'▾ ';}
+.entry{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12px;}
+.entry:last-child{border-bottom:none;}
+.entry .when{font-family:var(--mono);color:var(--ink-soft);width:62px;flex-shrink:0;}
+.entry .what{flex:1;min-width:0;}
+.entry .icon-btn{width:28px;height:28px;font-size:13px;}
+.tag{display:block;font-family:var(--mono);font-size:10px;color:var(--gold);margin-top:2px;letter-spacing:.02em;}
+.field-label{display:flex;flex-direction:column;gap:4px;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);}
+.field-label input,.field-label select{width:100%;text-transform:none;letter-spacing:0;}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;font-family:var(--mono);font-size:12px;padding:10px 16px;opacity:0;pointer-events:none;transition:all .25s;z-index:10;max-width:90vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.loading{padding:40px;text-align:center;color:var(--ink-soft);font-family:var(--mono);font-size:12px;}
+
+@media (max-width:640px){
+  .hero h1{font-size:28px;}
+  .grid-4{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .grid-3{gap:8px;}
+  .grid-3 .stat{padding:12px 10px;}
+  .grid-3 .stat .v{font-size:19px;}
+  .stat .v{font-size:22px;}
+  .two-col{grid-template-columns:1fr;gap:0;}
+  .card{padding:16px;}
+  /* Phones: all 8 tabs on two rows of four — no sideways swiping */
+  .tabs-wrap::after{display:none;}
+  .tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;overflow:visible;}
+  .tab{padding:11px 2px;font-size:clamp(9.5px, 2.9vw, 11px);letter-spacing:0;text-align:center;overflow:hidden;text-overflow:ellipsis;}
+  /* 16px stops iPhone zooming in when you tap a box */
+  input[type=text],input[type=number],input[type=date],select{font-size:16px;}
+  .row input[type=number]{width:110px;}
+  .txn-row .pill{display:none;}
+  .hgrid{grid-template-columns:repeat(7,minmax(0,1fr)) ;grid-template-areas:"name name name name name cnt del" "d0 d1 d2 d3 d4 d5 d6";}
+  .hgrid.head{grid-template-areas:"d0 d1 d2 d3 d4 d5 d6";}
+  .hgrid.head .h-name,.hgrid.head .h-cnt,.hgrid.head .h-del{display:none;}
+  .hgrid .h-name{font-weight:500;}
+  .hgrid input[type=checkbox]{width:24px;height:24px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">Wealth & Life OS</div>
+      <h1>Dashboard</h1>
+    </div>
+    <div class="date" id="todayDate"></div>
+  </div>
+
+  <div class="tabs-wrap" id="tabsWrap">
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-tab="overview">Overview</button>
+      <button class="tab" data-tab="transactions">Transactions</button>
+      <button class="tab" data-tab="payments">Payments</button>
+      <button class="tab" data-tab="plans">Plans</button>
+      <button class="tab" data-tab="budget">Budget</button>
+      <button class="tab" data-tab="networth">Net Worth</button>
+      <button class="tab" data-tab="goals">Goals</button>
+      <button class="tab" data-tab="habits">Habits</button>
+    </div>
+  </div>
+
+  <div id="app" class="loading">Loading your data…</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   Wealth & Life OS — everything is saved in this browser only
+   (localStorage key "lifeos-state"). Use Backup on the Overview tab.
+   ============================================================ */
+const STORE_KEY = 'lifeos-state';
+const $ = (s,el=document)=>el.querySelector(s);
+const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
+const num = v => { const n = parseFloat(v); return isFinite(n) ? n : 0; };
+const fmt = n => { n = num(n); const r = Math.round(Math.abs(n)); return (n<0 && r>0 ? '-' : '') + '$' + r.toLocaleString('en-AU'); };
+const uid = () => Math.random().toString(36).slice(2,9);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- Dates (always local time, so Sydney mornings work) ---------- */
+const pad = n => String(n).padStart(2,'0');
+const dateKey = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parseKey = k => { const [y,m,d] = String(k).split('-').map(Number); return new Date(y, (m||1)-1, d||1); };
+const todayKey = () => dateKey(new Date());
+const monthKeyOf = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}`;
+const currentMonthKey = () => monthKeyOf(new Date());
+function shiftMonth(mk, off){ const [y,m] = mk.split('-').map(Number); return monthKeyOf(new Date(y, m-1+off, 1)); }
+const monthLabel = mk => parseKey(mk).toLocaleDateString(undefined,{month:'long',year:'numeric'});
+const monthShort = mk => parseKey(mk).toLocaleDateString(undefined,{month:'short'});
+function weekStartKey(d){ const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay()+6)%7)); return dateKey(x); }
+const currentWeekKey = () => weekStartKey(new Date());
+function shiftWeek(wk, off){ const d = parseKey(wk); d.setDate(d.getDate() + 7*off); return dateKey(d); }
+function weekDays(wk){ const s = parseKey(wk); return [0,1,2,3,4,5,6].map(i=>{ const d = new Date(s); d.setDate(s.getDate()+i); return d; }); }
+function weekLabel(wk){ const ds = weekDays(wk), o = {day:'numeric',month:'short'}; return `${ds[0].toLocaleDateString(undefined,o)} – ${ds[6].toLocaleDateString(undefined,o)}`; }
+const BLANK_WEEK = () => [false,false,false,false,false,false,false];
+
+$('#todayDate').textContent = new Date().toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+/* ---------- Data ---------- */
+// A new device starts empty (your real numbers live on your device, not in this public file).
+function getDefaultState(){
+  return {
+    v: 2,
+    income: 0,
+    expenses: [],      // {id, name, amt}
+    assets: [],        // {id, name, amt}
+    liabilities: [],   // {id, name, amt}
+    goals: [],         // {id, name, target, current, date, link:'' | 'networth' | 'asset:<id>'}
+    habits: [          // {id, name, weeks:{'YYYY-MM-DD (Monday)': [7 x true/false]}}
+      {id:uid(), name:'Exercise', weeks:{}},
+      {id:uid(), name:'Sleep 7+ hrs', weeks:{}},
+      {id:uid(), name:'Budget check-in', weeks:{}},
+    ],
+    transactions: [],  // {id, date:'YYYY-MM-DD', type:'income'|'expense', category, amt, note}
+    paymentLog: {},    // {'YYYY-MM': {expenseId: true/false}}
+    // Payment plans followed over time (property instalments, debts, Raiz...)
+    // {id, name, kind:'buy'|'debt'|'save', start, target, monthly, expenseId, linkId,
+    //  entries:[{id, date, kind:'pay'|'set', amt, note, src}]}
+    plans: [],
+    // Exchange rates: how many of each currency you get for 1 AUD (update these now and then)
+    fx: {COP: 2400, EUR: 0.6},
+    lastBackup: null
+  };
+}
+
+// Brings data saved by older versions up to date without losing anything.
+function migrate(raw){
+  const s = {...getDefaultState(), ...(raw||{})};
+  ['expenses','assets','liabilities','goals','habits','transactions','plans'].forEach(k=>{ if(!Array.isArray(s[k])) s[k] = []; });
+  s.plans.forEach(p=>{
+    if(!p.id) p.id = uid();
+    if(!Array.isArray(p.entries)) p.entries = [];
+    if(!['buy','debt','save'].includes(p.kind)) p.kind = 'buy';
+    if(!CURRENCIES.includes(p.currency)) p.currency = 'AUD';
+    if(typeof p.note !== 'string') p.note = '';
+    p.entries.forEach(e=>{ if(!e.id) e.id = uid(); });
+  });
+  s.fx = {...getDefaultState().fx, ...(s.fx && typeof s.fx === 'object' ? s.fx : {})};
+  if(!s.paymentLog || typeof s.paymentLog !== 'object') s.paymentLog = {};
+  const wk = currentWeekKey();
+  s.habits.forEach(h=>{
+    if(!h.id) h.id = uid();
+    if(!h.weeks || typeof h.weeks !== 'object'){
+      h.weeks = {};
+      // Old version had one set of ticks that never reset. If any tick is on a day that
+      // hasn't happened yet this week, they must be last week's; otherwise keep them as this week's.
+      if(Array.isArray(h.days) && h.days.some(Boolean)){
+        const todayIdx = (new Date().getDay()+6)%7;
+        const future = h.days.slice(0,7).some((d,i)=>d && i>todayIdx);
+        h.weeks[future ? shiftWeek(wk,-1) : wk] = h.days.slice(0,7).map(Boolean);
+      }
+    }
+  });
+  s.goals.forEach(g=>{
+    if(!g.id) g.id = uid();
+    if(g.link === undefined) g.link = /net\s*worth/i.test(g.name||'') ? 'networth' : '';
+  });
+  [...s.expenses, ...s.assets, ...s.liabilities, ...s.transactions].forEach(x=>{ if(!x.id) x.id = uid(); });
+  s.v = 2;
+  return s;
+}
+
+let state = getDefaultState();
+
+function save(){
+  const wk = currentWeekKey();
+  // keep a plain copy of this week's ticks too, so an older cached version can still open the data
+  state.habits.forEach(h=>{ h.days = (h.weeks[wk] || BLANK_WEEK()).slice(); });
+  // Net Worth lines that follow a plan keep a copy of the plan's latest figure
+  [...state.assets, ...state.liabilities].forEach(r=>{ const p = linkedPlan(r.id); if(p) r.amt = Math.round(planAUD(p)*100)/100; });
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+  catch(e){ toast('Could not save on this device'); console.error(e); }
+}
+function load(){
+  try{
+    const r = localStorage.getItem(STORE_KEY);
+    state = migrate(r ? JSON.parse(r) : null);
+  }catch(e){ console.error(e); state = migrate(null); }
+}
+
+/* ---------- Sums ---------- */
+const sum = arr => arr.reduce((s,x)=>s+num(x.amt),0);
+const byDate = (a,b) => (a.date||'').localeCompare(b.date||'');
+
+/* ---------- Plans ---------- */
+const linkedPlan = rowId => rowId ? state.plans.find(p=>p.linkId===rowId) : null;
+const planForExpense = expId => state.plans.find(p=>p.expenseId===expId);
+// Start from the opening figure, then walk through the history in date order:
+// a payment adds (or, for a debt, takes away); a statement update replaces the figure.
+function planValue(p){
+  let v = num(p.start);
+  [...p.entries].sort(byDate).forEach(e=>{
+    if(e.kind === 'set') v = num(e.amt);
+    else v += (p.kind==='debt' ? -1 : 1) * num(e.amt);
+  });
+  return p.kind==='debt' ? Math.max(0, v) : v;
+}
+const KIND_LABEL = {buy:'Buying', debt:'Debt', save:'Saving'};
+// Plans can be kept in the currency of the statement (e.g. COP for Colombian developers).
+// Net Worth is always in AUD, using the exchange rates on the Plans tab.
+const CURRENCIES = ['AUD','COP','EUR'];
+const rateOf = cur => (cur && cur !== 'AUD') ? (num((state.fx||{})[cur]) || 1) : 1;
+const planAUD = p => planValue(p) / rateOf(p.currency);
+function fmtC(n, cur){
+  if(!cur || cur === 'AUD') return fmt(n);
+  n = num(n); const r = Math.round(Math.abs(n)), sign = (n<0 && r>0) ? '-' : '';
+  return cur === 'EUR' ? `${sign}€${r.toLocaleString('en-AU')}` : `${sign}$${r.toLocaleString('en-AU')} ${cur}`;
+}
+function planInfo(p){
+  const v = planValue(p), m = num(p.monthly), t = num(p.target), s0 = num(p.start), cur = p.currency, f = n => fmtC(n, cur);
+  const paidIn = p.entries.filter(e=>e.kind==='pay').reduce((s,e)=>s+num(e.amt),0);
+  const inAUD = cur && cur !== 'AUD' ? ` (≈ ${fmt(v/rateOf(cur))})` : '';
+  let pct = null, left = 0, line = '';
+  if(p.kind === 'debt'){
+    pct = s0>0 ? Math.max(0, Math.min(1, (s0-v)/s0)) : null; left = v;
+    line = v<=0.5 ? 'Paid off 🎉' : `${f(v)}${inAUD} left to pay` + (s0>0 && s0-v>0.5 ? ` · ${f(s0-v)} paid off so far` : '');
+  } else if(p.kind === 'buy'){
+    pct = t>0 ? Math.max(0, Math.min(1, v/t)) : null; left = t>0 ? t-v : 0;
+    line = t>0 ? `${f(v)}${inAUD} paid of ${f(t)} · ${left>0.5 ? f(left)+' left' : 'fully paid 🎉'}` : `${f(v)}${inAUD} paid so far`;
+  } else {
+    pct = t>0 ? Math.max(0, Math.min(1, v/t)) : null; left = t>0 ? t-v : 0;
+    line = `${f(v)}${inAUD} now` + (paidIn>0 ? ` · ${f(paidIn)} put in since tracking` : '') + (t>0 ? ` · target ${f(t)}` : '');
+  }
+  let eta = m>0 ? `${f(m)}/month` : '';
+  if(m>0 && left>0.5){
+    // (a final instalment up to 25% bigger than usual still counts as one payment)
+    const n = Math.max(1, Math.ceil(left/m - 0.25)), cm = currentMonthKey();
+    const paidThisMonth = p.expenseId && (state.paymentLog[cm]||{})[p.expenseId];
+    eta += ` · about ${n} more payment${n===1?'':'s'}, last one ≈ ${monthLabel(shiftMonth(cm, paidThisMonth ? n : n-1))}`;
+  }
+  return {v, pct, line, eta};
+}
+function planPaidInMonth(mk){
+  let s = 0;
+  state.plans.forEach(p=>p.entries.forEach(e=>{ if(e.kind==='pay' && (e.date||'').slice(0,7)===mk) s += num(e.amt)/rateOf(p.currency); }));
+  return s;
+}
+const rowAmt = r => { const p = linkedPlan(r.id); return p ? planAUD(p) : num(r.amt); };
+const totalExpenses = () => sum(state.expenses);
+const totalAssets = () => state.assets.reduce((s,a)=>s+rowAmt(a),0);
+const totalLiab = () => state.liabilities.reduce((s,l)=>s+rowAmt(l),0);
+const netWorth = () => totalAssets() - totalLiab();
+const leftToBudget = () => num(state.income) - totalExpenses();
+
+function goalCurrent(g){
+  if(g.link === 'networth') return netWorth();
+  if(g.link && g.link.startsWith('asset:')){
+    const a = state.assets.find(x=>x.id === g.link.slice(6));
+    if(a) return rowAmt(a);
+  }
+  return num(g.current);
+}
+function goalPct(g){ const t = num(g.target); return t>0 ? Math.max(0, Math.min(goalCurrent(g)/t, 1)) : 0; }
+function goalStatus(p){
+  if(p>=1) return ['Complete','status-complete'];
+  if(p>=0.5) return ['Halfway+','status-ontrack'];
+  if(p>0) return ['Building','status-ontrack'];
+  return ['Not started','status-none'];
+}
+function goalPlan(g){
+  const left = num(g.target) - goalCurrent(g);
+  if(left <= 0) return 'Target reached 🎉';
+  if(!g.date) return `${fmt(left)} to go`;
+  const end = parseKey(g.date);
+  const months = (end - new Date()) / (1000*60*60*24*30.44);
+  const when = end.toLocaleDateString(undefined,{month:'short',year:'numeric'});
+  if(months <= 0) return `${fmt(left)} to go · target date (${when}) has passed`;
+  return `${fmt(left)} to go · about ${fmt(left/Math.max(1,Math.round(months)))}/month to reach it by ${when}`;
+}
+
+// Habit completion. For the current week only the days so far count.
+function habitWeekPct(wk){
+  const cur = currentWeekKey();
+  const daysCounted = wk === cur ? ((new Date().getDay()+6)%7)+1 : (wk < cur ? 7 : 0);
+  let done=0, total=0;
+  state.habits.forEach(h=>{ const d = h.weeks[wk] || []; for(let i=0;i<daysCounted;i++){ total++; if(d[i]) done++; } });
+  return total ? done/total : 0;
+}
+
+function paymentSummary(mk){
+  const log = state.paymentLog[mk] || {};
+  let paidCount=0, paidAmt=0, totalAmt=0;
+  state.expenses.forEach(e=>{ totalAmt += num(e.amt); if(log[e.id]){ paidCount++; paidAmt += num(e.amt); } });
+  return {paidCount, total: state.expenses.length, paidAmt, totalAmt};
+}
+function monthlyTxnTotals(mk){
+  let income=0, expense=0;
+  state.transactions.forEach(t=>{
+    if((t.date||'').slice(0,7) !== mk) return;
+    if(t.type === 'income') income += num(t.amt); else expense += num(t.amt);
+  });
+  return {income, expense, net: income-expense};
+}
+function backupAgeDays(){
+  if(!state.lastBackup) return null;
+  return Math.floor((new Date() - new Date(state.lastBackup)) / 86400000);
+}
+
+/* ---------- View state ---------- */
+let activeTab = 'overview';
+let paymentViewMonth = currentMonthKey();
+let txnViewMonth = currentMonthKey();
+let habitViewWeek = currentWeekKey();
+let lastTxnType = 'expense';
+let dirty = false;
+
+/* ---------- Render ---------- */
+function navHTML(prev, next, label, nowAct, isNow){
+  return `<div class="nav">
+    <button class="small-btn ghost" data-act="${prev}">‹ Prev</button>
+    <div style="flex:1;text-align:center;"><h2>${label}</h2>${isNow?'':`<button class="today-link" data-act="${nowAct}">Back to now</button>`}</div>
+    <button class="small-btn ghost" data-act="${next}">Next ›</button>
+  </div>`;
+}
+function delBtn(kind, id, label){
+  return `<button class="icon-btn" data-del="${kind}" data-id="${id}" data-label="${esc(label)}" aria-label="Delete ${esc(label)}">×</button>`;
+}
+
+function nwRowHTML(r, kind, cls){
+  const p = linkedPlan(r.id);
+  return `<div class="row">
+    <span class="name">${esc(r.name)}${p?`<span class="tag">↻ updates from plan: ${esc(p.name)}</span>`:''}</span>
+    <input type="number" inputmode="decimal" step="0.01" value="${Math.round(rowAmt(r)*100)/100}" data-id="${r.id}" class="${cls}" aria-label="${esc(r.name)} amount" ${p?'disabled':''}>
+    ${delBtn(kind, r.id, r.name)}
+  </div>`;
+}
+
+// Open/closed state of the "History" and "Edit plan" drop-downs survives redraws
+const openDetails = new Set();
+const detailsAttr = key => `data-key="${key}" ${openDetails.has(key)?'open':''}`;
+
+function expenseOptions(selectedId, ownPlanId){
+  return `<option value="">None</option>` + state.expenses
+    .filter(e=>{ const p = planForExpense(e.id); return !p || p.id===ownPlanId; })
+    .map(e=>`<option value="${e.id}" ${e.id===selectedId?'selected':''}>${esc(e.name)} (${fmt(e.amt)})</option>`).join('');
+}
+function linkOptions(selectedId, ownPlanId){
+  const ok = r => { const p = linkedPlan(r.id); return !p || p.id===ownPlanId; };
+  const opt = r => `<option value="${r.id}" ${r.id===selectedId?'selected':''}>${esc(r.name)}</option>`;
+  return `<option value="">None</option>`
+    + (state.assets.length ? `<optgroup label="What you own">${state.assets.filter(ok).map(opt).join('')}</optgroup>` : '')
+    + (state.liabilities.length ? `<optgroup label="What you owe">${state.liabilities.filter(ok).map(opt).join('')}</optgroup>` : '');
+}
+
+function planCardHTML(p){
+  const info = planInfo(p);
+  const exp = state.expenses.find(e=>e.id===p.expenseId);
+  const row = [...state.assets, ...state.liabilities].find(r=>r.id===p.linkId);
+  const links = [exp ? `Paid by budget line “${esc(exp.name)}” — tick it in Payments` : '', row ? `Shows on Net Worth as “${esc(row.name)}”` : ''].filter(Boolean).join(' · ');
+  const setLabel = p.kind==='debt' ? 'Update balance' : p.kind==='buy' ? 'Update paid so far' : 'Update value';
+  const payLabel = p.kind==='save' ? 'Log deposit' : 'Log payment';
+  const inCur = p.currency && p.currency!=='AUD' ? ` (${p.currency})` : '';
+  const startLabel = (p.kind==='debt' ? 'Balance when you started' : p.kind==='buy' ? 'Paid when you started' : 'Value when you started') + inCur;
+  const hist = p.entries.map((e,i)=>({...e, i})).sort((a,b)=>byDate(b,a) || b.i-a.i); // newest first
+  const f = (field, label, val, type='number') => `<label class="field-label">${label}<input type="${type}" ${type==='number'?'inputmode="decimal" step="0.01"':''} value="${esc(val)}" class="planField" data-id="${p.id}" data-field="${field}"></label>`;
+  return `<div class="plan">
+    <div class="goal-head"><strong>${esc(p.name)}</strong><span class="pill ${p.kind==='debt'?'type-expense':p.kind==='save'?'status-complete':'status-ontrack'}">${KIND_LABEL[p.kind]}</span>${delBtn('plans', p.id, p.name)}</div>
+    ${info.pct!==null ? `<div class="bar-track"><div class="bar-fill ${info.pct>=1?'done':''}" style="width:${info.pct*100}%"></div></div>` : ''}
+    <div class="plan-line">${info.line}</div>
+    ${info.eta ? `<div class="goal-meta" style="margin:4px 0 0;">${info.eta}</div>` : ''}
+    ${p.note ? `<div class="goal-meta" style="margin:4px 0 0;font-style:italic;">${esc(p.note)}</div>` : ''}
+    ${links ? `<div class="goal-meta" style="margin:4px 0 0;">${links}</div>` : ''}
+    <details ${detailsAttr('l-'+p.id)}><summary>${payLabel} or ${setLabel.toLowerCase()}</summary>
+      <div class="form-grid" data-enter="planPay" data-id="${p.id}" style="margin-top:6px;">
+        <input type="date" id="pd-${p.id}" value="${todayKey()}" aria-label="Date">
+        <input type="number" id="pa-${p.id}" placeholder="Amount${inCur}" inputmode="decimal" step="0.01">
+        <input type="text" id="pn-${p.id}" placeholder="Note (optional)">
+      </div>
+      <div class="add-row">
+        <button class="small-btn" data-act="planPay" data-id="${p.id}">${payLabel}</button>
+        <button class="small-btn ghost" data-act="planSet" data-id="${p.id}">${setLabel}</button>
+      </div>
+      <div class="hint">${payLabel} adds to it. ${setLabel} replaces it with the figure on your latest statement.</div>
+    </details>
+    <details ${detailsAttr('h-'+p.id)}><summary>History (${hist.length})</summary>
+      ${hist.map(e=>`<div class="entry">
+        <span class="when">${esc(parseKey(e.date).toLocaleDateString(undefined, e.date.slice(0,4)===String(new Date().getFullYear()) ? {day:'numeric',month:'short'} : {day:'numeric',month:'short',year:'2-digit'}))}</span>
+        <span class="what">${e.kind==='set' ? `Set to ${fmtC(e.amt,p.currency)} (statement)` : `${p.kind==='debt'?'Paid':'Added'} ${fmtC(e.amt,p.currency)}`}${e.note?`<span class="txn-sub">${esc(e.note)}</span>`:''}</span>
+        <button class="icon-btn" data-del="planEntry" data-plan="${p.id}" data-id="${e.id}" data-label="this ${e.kind==='set'?'balance update':'payment'} (${fmtC(e.amt,p.currency)})" aria-label="Delete entry">×</button>
+      </div>`).join('') || '<div class="hint">Nothing logged yet.</div>'}
+    </details>
+    <details ${detailsAttr('s-'+p.id)}><summary>Edit plan</summary>
+      <div class="goal-fields" style="margin-top:6px;">
+        ${f('name','Name',p.name,'text')}
+        <label class="field-label">Type<select class="planField" data-id="${p.id}" data-field="kind">
+          <option value="buy" ${p.kind==='buy'?'selected':''}>Buying (property, lot)</option>
+          <option value="debt" ${p.kind==='debt'?'selected':''}>Paying off a debt</option>
+          <option value="save" ${p.kind==='save'?'selected':''}>Saving / investing</option>
+        </select></label>
+        <label class="field-label">Currency<select class="planField" data-id="${p.id}" data-field="currency">
+          ${CURRENCIES.map(c=>`<option value="${c}" ${p.currency===c?'selected':''}>${c}</option>`).join('')}
+        </select></label>
+        ${f('start',startLabel,num(p.start))}
+        ${p.kind!=='debt' ? f('target', (p.kind==='buy'?'Total to pay':'Target (optional)')+inCur, num(p.target)||'') : ''}
+        ${f('monthly','Amount per month'+inCur,num(p.monthly)||'')}
+        ${f('note','Note',p.note||'','text')}
+        <label class="field-label">Paid by budget line<select class="planField" data-id="${p.id}" data-field="expenseId">${expenseOptions(p.expenseId, p.id)}</select></label>
+        <label class="field-label">Shows on Net Worth as<select class="planField" data-id="${p.id}" data-field="linkId">${linkOptions(p.linkId, p.id)}</select></label>
+      </div>
+    </details>
+  </div>`;
+}
+
+function plansPanelHTML(){
+  const cm = currentMonthKey();
+  const debtLeft = state.plans.filter(p=>p.kind==='debt').reduce((s,p)=>s+planAUD(p),0);
+  const bought = state.plans.filter(p=>p.kind==='buy').reduce((s,p)=>s+planAUD(p),0);
+  return `
+    ${state.plans.length ? `<div class="grid grid-3">
+      <div class="stat"><div class="k">Debt left</div><div class="v neg">${fmt(debtLeft)}</div></div>
+      <div class="stat"><div class="k">Property paid</div><div class="v">${fmt(bought)}</div></div>
+      <div class="stat"><div class="k">Paid in · ${monthShort(cm)}</div><div class="v">${fmt(planPaidInMonth(cm))}</div></div>
+    </div>` : `<div class="notice">A <b>plan</b> follows something you pay over time — an apartment, a lot, a credit card or your Raiz account. Link it to a bill in your budget and ticking that bill in <b>Payments</b> logs the payment here by itself. Link it to a Net Worth line and that line updates by itself too.</div>`}
+    <div class="card">
+      <h2>Your plans</h2>
+      ${state.plans.map(planCardHTML).join('') || '<div class="hint">No plans yet — add your first one below.</div>'}
+    </div>
+    <div class="card">
+      <h2>Add a plan</h2>
+      <div class="goal-fields" data-enter="addPlan">
+        <label class="field-label">Name<input type="text" id="npName" placeholder="e.g. Lot 1"></label>
+        <label class="field-label">Type<select id="npKind">
+          <option value="buy">Buying (property, lot)</option>
+          <option value="debt">Paying off a debt</option>
+          <option value="save">Saving / investing</option>
+        </select></label>
+        <label class="field-label">Currency of the statement<select id="npCur">${CURRENCIES.map(c=>`<option value="${c}">${c}</option>`).join('')}</select></label>
+        <label class="field-label">Paid by budget line<select id="npExp">${expenseOptions('', null)}</select></label>
+        <label class="field-label">Shows on Net Worth as<select id="npLink">${linkOptions('', null)}</select></label>
+        <label class="field-label">Paid so far / balance now<input type="number" id="npStart" inputmode="decimal" step="0.01" placeholder="e.g. 4474"></label>
+        <label class="field-label">Total to pay / target<input type="number" id="npTarget" inputmode="decimal" step="0.01" placeholder="Optional"></label>
+        <label class="field-label">Amount per month<input type="number" id="npMonthly" inputmode="decimal" step="0.01" placeholder="e.g. 528"></label>
+      </div>
+      <div class="add-row"><button class="small-btn" data-act="addPlan">Add plan</button></div>
+      <div class="hint">Type amounts in the statement's currency. “Balance now”: for a debt, what you still owe; for a property or lot, what you've paid so far. Leave it blank to use the Net Worth line's figure (AUD plans only). Leave “amount per month” blank to use the budget line's amount.</div>
+    </div>
+    <div class="card">
+      <h2>Exchange rates</h2>
+      <p>Plans in other currencies are turned into AUD for your Net Worth with these rates. Update them now and then — your bank transfer or the Wise app shows today's rate.</p>
+      ${CURRENCIES.filter(c=>c!=='AUD').map(c=>`<div class="row">
+        <label for="fx-${c}">1 AUD =</label>
+        <input type="number" id="fx-${c}" class="fxInput" data-cur="${c}" inputmode="decimal" step="0.0001" value="${num(state.fx[c])}">
+        <span style="font-family:var(--mono);font-size:12px;width:36px;">${c}</span>
+      </div>`).join('')}
+    </div>`;
+}
+
+function render(){
+  dirty = false;
+  const app = $('#app');
+  app.className = '';
+  const cm = currentMonthKey(), cw = currentWeekKey();
+  const nw = netWorth(), ltb = leftToBudget();
+  const ps = paymentSummary(cm);
+  const hp = habitWeekPct(cw);
+  const age = backupAgeDays();
+  const backupStale = age === null || age > 14;
+  const isEmpty = !state.expenses.length && !state.assets.length && !state.liabilities.length && !state.transactions.length;
+  const tm = monthlyTxnTotals(txnViewMonth);
+  const txns = state.transactions.filter(t=>(t.date||'').slice(0,7) === txnViewMonth)
+                .sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const pps = paymentSummary(paymentViewMonth);
+  const plog = state.paymentLog[paymentViewMonth] || {};
+  const days = weekDays(habitViewWeek);
+  const tIdx = habitViewWeek === cw ? (new Date().getDay()+6)%7 : -1;
+  const catOptions = [...new Set([...state.expenses.map(e=>e.name), 'Wages', 'Other income', ...state.transactions.map(t=>t.category)])].filter(Boolean);
+
+  app.innerHTML = `
+  <!-- OVERVIEW -->
+  <section class="panel" id="panel-overview">
+    ${isEmpty ? `<div class="notice">Nothing is saved on this device yet. Used this on another phone or computer? Scroll down and tap <b>Restore from backup</b>.</div>` : ''}
+    <div class="grid grid-4">
+      <div class="stat"><div class="k">Net worth</div><div class="v ${nw<0?'neg':''}">${fmt(nw)}</div><div class="sub">${fmt(totalAssets())} owned − ${fmt(totalLiab())} owed</div></div>
+      <div class="stat"><div class="k">Left to budget</div><div class="v ${ltb<-0.5?'neg':''}">${fmt(ltb)}</div><div class="sub">${Math.abs(ltb)<0.5 ? 'Every dollar has a job ✓' : ltb>0 ? 'Not given a job yet' : 'Planned more than you earn'}</div></div>
+      <div class="stat"><div class="k">Bills paid · ${monthShort(cm)}</div><div class="v">${ps.paidCount}/${ps.total}</div><div class="sub">${fmt(ps.paidAmt)} of ${fmt(ps.totalAmt)}</div></div>
+      <div class="stat"><div class="k">Habits this week</div><div class="v">${Math.round(hp*100)}%</div><div class="sub">Days so far</div></div>
+    </div>
+    <div class="card">
+      <h2>Goals at a glance</h2>
+      ${state.goals.map(g=>{
+        const p = goalPct(g);
+        return `<div style="margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:4px;">
+            <span>${esc(g.name||'Untitled goal')}</span><span class="pct">${p>0&&p<0.01?'<1':Math.round(p*100)}%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill ${p>=1?'done':''}" style="width:${p*100}%"></div></div>
+        </div>`;
+      }).join('') || '<div class="hint">Add goals in the Goals tab.</div>'}
+    </div>
+    <div class="card">
+      <h2>Backup</h2>
+      <p>Your numbers are saved only in this browser on this device. If it's cleared, they're gone — so keep a backup file (save it to Files, iCloud Drive or email it to yourself). It's also how you move everything to a new phone.</p>
+      <div class="row" style="border:none;padding:0 0 4px;"><span class="name">Last backup</span><span class="${backupStale?'warn':''}" style="font-family:var(--mono);font-size:12px;">${age===null ? 'Never' : age===0 ? 'Today' : age===1 ? 'Yesterday' : age+' days ago'}</span></div>
+      <div class="add-row">
+        <button class="small-btn" data-act="backup">Download backup</button>
+        <button class="small-btn ghost" data-act="restore">Restore from backup</button>
+      </div>
+      <input type="file" id="restoreFile" hidden>
+    </div>
+    <div class="hint">This dashboard is for quick check-ins. Use your Wealth_Life_OS.xlsx workbook for full monthly bookkeeping.</div>
+  </section>
+
+  <!-- TRANSACTIONS -->
+  <section class="panel" id="panel-transactions">
+    <div class="card">${navHTML('txnPrev','txnNext',monthLabel(txnViewMonth),'txnNow',txnViewMonth===cm)}
+      <div class="grid grid-3" style="margin-bottom:0;">
+        <div class="stat"><div class="k">Income</div><div class="v">${fmt(tm.income)}</div></div>
+        <div class="stat"><div class="k">Spent</div><div class="v neg">${fmt(tm.expense)}</div></div>
+        <div class="stat"><div class="k">Net</div><div class="v ${tm.net<0?'neg':''}">${fmt(tm.net)}</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Log a transaction</h2>
+      <div class="form-grid" data-enter="addTxn">
+        <input type="date" id="newTxnDate" value="${todayKey()}" aria-label="Date">
+        <select id="newTxnType" aria-label="Type">
+          <option value="expense" ${lastTxnType==='expense'?'selected':''}>Expense</option>
+          <option value="income" ${lastTxnType==='income'?'selected':''}>Income</option>
+        </select>
+        <input type="text" id="newTxnCategory" list="catList" placeholder="Category (e.g. Groceries)" autocomplete="off">
+        <input type="number" id="newTxnAmt" placeholder="Amount" inputmode="decimal" step="0.01">
+        <input type="text" id="newTxnNote" placeholder="Note (optional)">
+      </div>
+      <datalist id="catList">${catOptions.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+      <div class="add-row"><button class="small-btn" data-act="addTxn">Add transaction</button></div>
+    </div>
+    <div class="card">
+      <h2>${monthLabel(txnViewMonth)}</h2>
+      ${txns.map(t=>`<div class="txn-row">
+          <span class="txn-main">${esc(t.category||'Uncategorised')}<span class="txn-sub">${esc(parseKey(t.date).toLocaleDateString(undefined,{day:'numeric',month:'short'}))}${t.note?' · '+esc(t.note):''}</span></span>
+          <span class="pill ${t.type==='income'?'type-income':'type-expense'}">${t.type}</span>
+          <span class="txn-amt ${t.type}">${t.type==='income'?'+':'-'}${fmt(Math.abs(num(t.amt)))}</span>
+          ${delBtn('transactions', t.id, `${t.category||'this transaction'} (${fmt(t.amt)})`)}
+        </div>`).join('') || `<div class="hint">Nothing logged in ${monthLabel(txnViewMonth)}${state.transactions.length?' — use ‹ Prev to see earlier months':''}.</div>`}
+    </div>
+  </section>
+
+  <!-- PAYMENTS -->
+  <section class="panel" id="panel-payments">
+    <div class="card">
+      ${navHTML('payPrev','payNext',monthLabel(paymentViewMonth),'payNow',paymentViewMonth===cm)}
+      ${state.expenses.map(e=>`<label class="row" style="cursor:pointer;">
+          <input type="checkbox" ${plog[e.id]?'checked':''} data-id="${e.id}" class="paymentCheck" style="width:20px;height:20px;margin:0;">
+          <span class="name">${esc(e.name)}${planForExpense(e.id)?`<span class="tag">→ adds to plan: ${esc(planForExpense(e.id).name)}</span>`:''}</span>
+          <span class="txn-amt">${fmt(e.amt)}</span>
+        </label>`).join('') || '<div class="hint">Add your monthly expenses in the Budget tab first, then tick them off here each month.</div>'}
+    </div>
+    <div class="card">
+      <h2>${monthLabel(paymentViewMonth)} summary</h2>
+      <div class="row" style="border:none;"><span class="name">Paid</span><span class="pct">${pps.paidCount} / ${pps.total}</span></div>
+      <div class="bar-track" style="margin-bottom:10px;"><div class="bar-fill ${pps.total&&pps.paidCount===pps.total?'done':''}" style="width:${pps.total?(pps.paidCount/pps.total*100):0}%"></div></div>
+      <div class="hint">${fmt(pps.paidAmt)} paid of ${fmt(pps.totalAmt)} · ${fmt(pps.totalAmt-pps.paidAmt)} still to go</div>
+    </div>
+  </section>
+
+  <!-- PLANS -->
+  <section class="panel" id="panel-plans">
+    ${plansPanelHTML()}
+  </section>
+
+  <!-- BUDGET -->
+  <section class="panel" id="panel-budget">
+    <div class="card">
+      <h2>Monthly income</h2>
+      <div class="row"><label for="incomeInput">Total monthly income</label><input type="number" id="incomeInput" inputmode="decimal" step="0.01" value="${num(state.income)}"></div>
+    </div>
+    <div class="card">
+      <h2>Monthly expenses</h2>
+      ${state.expenses.map(e=>`<div class="row">
+          <span class="name">${esc(e.name)}</span>
+          <input type="number" inputmode="decimal" step="0.01" value="${num(e.amt)}" data-id="${e.id}" class="expAmt" aria-label="${esc(e.name)} amount">
+          ${delBtn('expenses', e.id, e.name)}
+        </div>`).join('') || '<div class="hint">No expenses yet.</div>'}
+      <div class="add-row" data-enter="addExpense">
+        <input type="text" id="newExpName" placeholder="Expense name">
+        <input type="number" id="newExpAmt" placeholder="Amount" inputmode="decimal" step="0.01">
+        <button class="small-btn" data-act="addExpense">Add</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row"><span class="name">Income</span><span class="total">${fmt(state.income)}</span></div>
+      <div class="row"><span class="name">Planned expenses</span><span class="total">− ${fmt(totalExpenses())}</span></div>
+      <div class="row"><span class="name"><b>Left to budget</b></span><span class="total" style="color:${ltb<-0.5?'var(--danger)':'var(--evergreen)'}">${fmt(ltb)}</span></div>
+      <div class="hint">${Math.abs(ltb)<0.5 ? 'Every dollar of income has a job.' : ltb>0 ? 'Give this money a job — savings, buffer or a goal.' : 'Your plan is more than your income — trim something.'}</div>
+    </div>
+  </section>
+
+  <!-- NET WORTH -->
+  <section class="panel" id="panel-networth">
+    <div class="two-col">
+      <div class="card">
+        <h2>What you own</h2>
+        ${state.assets.map(a=>nwRowHTML(a,'assets','assetAmt')).join('') || '<div class="hint">No assets yet.</div>'}
+        <div class="add-row" data-enter="addAsset">
+          <input type="text" id="newAssetName" placeholder="Asset name">
+          <input type="number" id="newAssetAmt" placeholder="Amount" inputmode="decimal" step="0.01">
+          <button class="small-btn" data-act="addAsset">Add</button>
+        </div>
+        <div class="row" style="border-top:1px solid var(--line);border-bottom:none;margin-top:12px;"><span class="name"><b>Total owned</b></span><span class="total">${fmt(totalAssets())}</span></div>
+      </div>
+      <div class="card">
+        <h2>What you owe</h2>
+        ${state.liabilities.map(l=>nwRowHTML(l,'liabilities','liabAmt')).join('') || '<div class="hint">No debts — nice.</div>'}
+        <div class="add-row" data-enter="addLiab">
+          <input type="text" id="newLiabName" placeholder="Debt name">
+          <input type="number" id="newLiabAmt" placeholder="Amount" inputmode="decimal" step="0.01">
+          <button class="small-btn" data-act="addLiab">Add</button>
+        </div>
+        <div class="row" style="border-top:1px solid var(--line);border-bottom:none;margin-top:12px;"><span class="name"><b>Total owed</b></span><span class="total" style="color:var(--danger)">${fmt(totalLiab())}</span></div>
+      </div>
+    </div>
+    <div class="card"><h2 style="margin:0;">Net worth: <span style="color:${nw<0?'var(--danger)':'var(--evergreen)'}">${fmt(nw)}</span></h2></div>
+  </section>
+
+  <!-- GOALS -->
+  <section class="panel" id="panel-goals">
+    <div class="card">
+      <h2>Goals</h2>
+      ${state.goals.map(g=>{
+        const p = goalPct(g), st = goalStatus(p), linked = !!g.link && (g.link==='networth' || state.assets.some(a=>'asset:'+a.id===g.link));
+        return `<div class="goal">
+          <div class="goal-head"><strong>${esc(g.name)}</strong><span class="pill ${st[1]}">${st[0]}</span>${delBtn('goals', g.id, g.name)}</div>
+          <div class="bar-track"><div class="bar-fill ${p>=1?'done':''}" style="width:${p*100}%"></div></div>
+          <div class="goal-meta">${fmt(goalCurrent(g))} of ${fmt(g.target)} · ${goalPlan(g)}</div>
+          <div class="goal-fields">
+            <label>Current<input type="number" inputmode="decimal" step="0.01" value="${Math.round(goalCurrent(g)*100)/100}" data-id="${g.id}" class="goalCurrent" ${linked?'disabled':''}></label>
+            <label>Target<input type="number" inputmode="decimal" step="0.01" value="${num(g.target)}" data-id="${g.id}" class="goalTarget"></label>
+            <label>Reach by (optional)<input type="date" value="${esc(g.date||'')}" data-id="${g.id}" class="goalDate"></label>
+            <label>Current comes from
+              <select data-id="${g.id}" class="goalLink">
+                <option value="" ${!linked?'selected':''}>Manual</option>
+                <option value="networth" ${g.link==='networth'?'selected':''}>Net worth</option>
+                ${state.assets.map(a=>`<option value="asset:${a.id}" ${g.link==='asset:'+a.id?'selected':''}>${esc(a.name)}</option>`).join('')}
+              </select>
+            </label>
+          </div>
+        </div>`;
+      }).join('') || '<div class="hint">No goals yet.</div>'}
+      <h2 style="margin-top:18px;">Add a goal</h2>
+      <div class="goal-fields" data-enter="addGoal">
+        <label class="field-label">Goal name<input type="text" id="newGoalName" placeholder="e.g. Italy trip"></label>
+        <label class="field-label">Target $<input type="number" id="newGoalTarget" placeholder="e.g. 8000" inputmode="decimal" step="0.01"></label>
+        <label class="field-label">Current $<input type="number" id="newGoalCurrent" placeholder="0" inputmode="decimal" step="0.01"></label>
+        <label class="field-label">Reach by (optional)<input type="date" id="newGoalDate"></label>
+      </div>
+      <div class="add-row"><button class="small-btn" data-act="addGoal">Add goal</button></div>
+      <div class="hint">Tip: add a savings account under Net Worth, then set a goal's "Current comes from" to that account — the goal updates itself.</div>
+    </div>
+  </section>
+
+  <!-- HABITS -->
+  <section class="panel" id="panel-habits">
+    <div class="card">
+      ${navHTML('weekPrev','weekNext',weekLabel(habitViewWeek),'weekNow',habitViewWeek===cw)}
+      <div class="hgrid head">
+        <div class="h-name">Habit</div>
+        ${days.map((d,i)=>`<div class="c ${i===tIdx?'today':''}" style="grid-area:d${i}"><span>${'MTWTFSS'[i]}</span><span>${d.getDate()}</span></div>`).join('')}
+        <div class="h-cnt"></div><div class="h-del"></div>
+      </div>
+      ${state.habits.map(h=>{
+        const wkd = h.weeks[habitViewWeek] || BLANK_WEEK();
+        return `<div class="hgrid">
+          <div class="h-name">${esc(h.name)}</div>
+          ${wkd.map((v,i)=>`<div class="c ${i===tIdx?'today-col':''}" style="grid-area:d${i}"><input type="checkbox" ${v?'checked':''} data-id="${h.id}" data-day="${i}" class="habitCheck" aria-label="${esc(h.name)} ${'Mon Tue Wed Thu Fri Sat Sun'.split(' ')[i]}"></div>`).join('')}
+          <div class="h-cnt">${wkd.filter(Boolean).length}/7</div>
+          <div class="h-del">${delBtn('habits', h.id, h.name)}</div>
+        </div>`;
+      }).join('') || '<div class="hint">No habits yet.</div>'}
+      <div class="add-row" data-enter="addHabit">
+        <input type="text" id="newHabitName" placeholder="New habit">
+        <button class="small-btn" data-act="addHabit">Add</button>
+      </div>
+      <div class="hint">${habitViewWeek===cw ? `This week so far: ${Math.round(habitWeekPct(cw)*100)}% · ticks start fresh every Monday` : `That week: ${Math.round(habitWeekPct(habitViewWeek)*100)}%`}</div>
+    </div>
+  </section>
+  `;
+  showTab(activeTab);
+}
+
+/* ---------- Tabs ---------- */
+function showTab(name){
+  activeTab = name;
+  $$('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+  $$('.panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+name));
+  updateTabFade();
+}
+// Slide the tab bar sideways (never the page) so the chosen tab is fully visible
+function revealTab(t){
+  const tabs = $('#tabs'), l = t.offsetLeft, r = l + t.offsetWidth;
+  if(l < tabs.scrollLeft) tabs.scrollLeft = l - 8;
+  else if(r > tabs.scrollLeft + tabs.clientWidth) tabs.scrollLeft = r - tabs.clientWidth + 8;
+  updateTabFade();
+}
+function updateTabFade(){
+  const tabs = $('#tabs');
+  $('#tabsWrap').classList.toggle('more', tabs.scrollLeft + tabs.clientWidth < tabs.scrollWidth - 4);
+}
+$('#tabs').addEventListener('click', e=>{
+  const t = e.target.closest('.tab'); if(!t) return;
+  if(dirty) render();
+  showTab(t.dataset.tab);
+  revealTab(t);
+  window.scrollTo({top:0});
+});
+$('#tabs').addEventListener('scroll', updateTabFade, {passive:true});
+window.addEventListener('resize', updateTabFade);
+
+/* ---------- Toast ---------- */
+let toastTimer;
+function toast(msg){
+  const el = $('#toast'); el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>el.classList.remove('show'), 2200);
+}
+
+/* ---------- Typing: save straight away, redraw once you leave the box
+   (so moving from one box to the next doesn't close the keyboard) ---------- */
+function softUpdate(){ save(); dirty = true; setTimeout(maybeRender, 80); }
+function maybeRender(){
+  const a = document.activeElement;
+  if(a && $('#app').contains(a) && /^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName) && a.type !== 'checkbox') return;
+  if(dirty) render();
+}
+$('#app').addEventListener('focusout', ()=>{ if(dirty) setTimeout(maybeRender, 80); });
+
+/* ---------- Changes ---------- */
+const findIn = (list, id) => state[list].find(x=>x.id===id);
+$('#app').addEventListener('change', e=>{
+  const el = e.target, id = el.dataset.id, c = el.classList;
+  if(el.id === 'incomeInput'){ state.income = num(el.value); return softUpdate(); }
+  if(c.contains('expAmt')){ const x=findIn('expenses',id); if(x) x.amt=num(el.value); return softUpdate(); }
+  if(c.contains('assetAmt')){ const x=findIn('assets',id); if(x) x.amt=num(el.value); return softUpdate(); }
+  if(c.contains('liabAmt')){ const x=findIn('liabilities',id); if(x) x.amt=num(el.value); return softUpdate(); }
+  if(c.contains('goalCurrent')){ const x=findIn('goals',id); if(x) x.current=num(el.value); return softUpdate(); }
+  if(c.contains('goalTarget')){ const x=findIn('goals',id); if(x) x.target=num(el.value); return softUpdate(); }
+  if(c.contains('goalDate')){ const x=findIn('goals',id); if(x) x.date=el.value; return softUpdate(); }
+  if(c.contains('goalLink')){
+    const x=findIn('goals',id);
+    if(x){ if(!el.value && x.link) x.current = Math.round(goalCurrent(x)*100)/100; x.link = el.value; }
+    save(); return render();
+  }
+  if(c.contains('habitCheck')){
+    const h = findIn('habits',id); if(!h) return;
+    const wk = (h.weeks[habitViewWeek] || BLANK_WEEK()).slice();
+    wk[Number(el.dataset.day)] = el.checked;
+    h.weeks[habitViewWeek] = wk;
+    save(); return render();
+  }
+  if(c.contains('paymentCheck')){
+    if(!state.paymentLog[paymentViewMonth]) state.paymentLog[paymentViewMonth] = {};
+    state.paymentLog[paymentViewMonth][id] = el.checked;
+    // If this bill pays a plan, add (or take back) that month's payment in the plan
+    const p = planForExpense(id), exp = findIn('expenses', id);
+    if(p && exp){
+      const src = paymentViewMonth + ':' + id;
+      p.entries = p.entries.filter(x=>x.src !== src);
+      if(el.checked){
+        const date = paymentViewMonth === currentMonthKey() ? todayKey() : paymentViewMonth + '-01';
+        // AUD plan: the bill amount. Other currency: the plan's monthly instalment (or the bill converted).
+        const amt = (!p.currency || p.currency==='AUD') ? num(exp.amt)
+                  : (num(p.monthly) > 0 ? num(p.monthly) : Math.round(num(exp.amt)*rateOf(p.currency)));
+        p.entries.push({id:uid(), kind:'pay', amt, date, note:'Ticked in Payments', src});
+        toast(`${fmtC(amt, p.currency)} added to ${p.name}`);
+      } else toast(`Payment taken off ${p.name}`);
+    }
+    save(); return render();
+  }
+  if(c.contains('planField')){
+    const p = findIn('plans', id); if(!p) return;
+    const field = el.dataset.field;
+    if(field === 'linkId'){
+      if(el.value && linkedPlan(el.value) && linkedPlan(el.value).id !== p.id){ toast('That line already follows another plan'); return render(); }
+      const old = [...state.assets, ...state.liabilities].find(r=>r.id===p.linkId);
+      if(old) old.amt = Math.round(planAUD(p)*100)/100; // the old line keeps its last figure
+      p.linkId = el.value; save(); return render();
+    }
+    if(field === 'expenseId' || field === 'kind' || field === 'currency'){ p[field] = el.value; save(); return render(); }
+    if(field === 'name') p.name = el.value.trim() || p.name;
+    else if(field === 'note') p.note = el.value.trim();
+    else p[field] = num(el.value);
+    return softUpdate();
+  }
+  if(c.contains('fxInput')){ if(num(el.value) > 0) state.fx[el.dataset.cur] = num(el.value); return softUpdate(); }
+  if(el.id === 'restoreFile' && el.files && el.files[0]) restoreFrom(el.files[0]);
+});
+
+/* ---------- Buttons ---------- */
+function val(sel){ const el=$(sel); return el ? el.value.trim() : ''; }
+const actions = {
+  payPrev(){ paymentViewMonth = shiftMonth(paymentViewMonth,-1); },
+  payNext(){ paymentViewMonth = shiftMonth(paymentViewMonth, 1); },
+  payNow(){ paymentViewMonth = currentMonthKey(); },
+  txnPrev(){ txnViewMonth = shiftMonth(txnViewMonth,-1); },
+  txnNext(){ txnViewMonth = shiftMonth(txnViewMonth, 1); },
+  txnNow(){ txnViewMonth = currentMonthKey(); },
+  weekPrev(){ habitViewWeek = shiftWeek(habitViewWeek,-1); },
+  weekNext(){ habitViewWeek = shiftWeek(habitViewWeek, 1); },
+  weekNow(){ habitViewWeek = currentWeekKey(); },
+  addTxn(){
+    const date = val('#newTxnDate') || todayKey(), type = val('#newTxnType'), category = val('#newTxnCategory');
+    const amt = num(val('#newTxnAmt')), note = val('#newTxnNote');
+    if(!category){ toast('Add a category'); return false; }
+    if(amt <= 0){ toast('Add an amount'); return false; }
+    state.transactions.push({id:uid(), date, type, category, amt, note});
+    lastTxnType = type; txnViewMonth = date.slice(0,7);
+    save(); toast('Transaction added');
+  },
+  addExpense(){ const name=val('#newExpName'); if(!name) return false; state.expenses.push({id:uid(), name, amt:num(val('#newExpAmt'))}); save(); },
+  addAsset(){ const name=val('#newAssetName'); if(!name) return false; state.assets.push({id:uid(), name, amt:num(val('#newAssetAmt'))}); save(); },
+  addLiab(){ const name=val('#newLiabName'); if(!name) return false; state.liabilities.push({id:uid(), name, amt:num(val('#newLiabAmt'))}); save(); },
+  addGoal(){
+    const name=val('#newGoalName'); if(!name) return false;
+    state.goals.push({id:uid(), name, target:num(val('#newGoalTarget')), current:num(val('#newGoalCurrent')), date:val('#newGoalDate'), link:''});
+    save();
+  },
+  addHabit(){ const name=val('#newHabitName'); if(!name) return false; state.habits.push({id:uid(), name, weeks:{}}); save(); },
+  addPlan(){
+    const name = val('#npName'); if(!name){ toast('Give the plan a name'); return false; }
+    const kind = val('#npKind') || 'buy', expenseId = val('#npExp'), linkId = val('#npLink');
+    const currency = val('#npCur') || 'AUD', rate = rateOf(currency);
+    const start = val('#npStart'), monthly = val('#npMonthly');
+    const row = [...state.assets, ...state.liabilities].find(r=>r.id===linkId);
+    const exp = state.expenses.find(e=>e.id===expenseId);
+    if(start==='' && !row){ toast(kind==='debt' ? 'Add the balance you owe now' : 'Add how much is paid so far (or 0)'); return false; }
+    state.plans.push({
+      id:uid(), name, kind, currency, note:'',
+      start: start!=='' ? num(start) : Math.round(num(row.amt)*rate*100)/100,
+      target: num(val('#npTarget')),
+      monthly: monthly!=='' ? num(monthly) : (exp ? Math.round(num(exp.amt)*rate*100)/100 : 0),
+      expenseId, linkId, entries:[]
+    });
+    save(); toast('Plan added');
+  },
+  planPay(btn){ return planEntry(btn.dataset.id, 'pay'); },
+  planSet(btn){ return planEntry(btn.dataset.id, 'set'); },
+  backup(){ downloadBackup(); return false; },
+  restore(){ const f=$('#restoreFile'); if(f){ f.value=''; f.click(); } return false; },
+};
+function planEntry(pid, kind){
+  const p = findIn('plans', pid); if(!p) return false;
+  const raw = val('#pa-'+pid);
+  if(raw === '' || (kind==='pay' && num(raw) <= 0)){ toast('Type an amount first'); return false; }
+  p.entries.push({id:uid(), kind, amt:num(raw), date: val('#pd-'+pid) || todayKey(), note: val('#pn-'+pid)});
+  save(); toast(kind==='pay' ? `Logged in ${p.name}` : `${p.name} updated`);
+}
+
+$('#app').addEventListener('click', e=>{
+  const del = e.target.closest('[data-del]');
+  if(del){
+    const kind = del.dataset.del, id = del.dataset.id;
+    if(!confirm(`Delete “${del.dataset.label}”?`)) return;
+    if(kind === 'planEntry'){
+      const p = findIn('plans', del.dataset.plan); if(!p) return;
+      const entry = p.entries.find(x=>x.id===id);
+      // a payment that came from ticking a bill: untick that bill too
+      if(entry && entry.src){ const [mk, expId] = entry.src.split(':'); if(state.paymentLog[mk]) state.paymentLog[mk][expId] = false; }
+      p.entries = p.entries.filter(x=>x.id!==id);
+      save(); render(); return;
+    }
+    if(kind === 'plans'){
+      const p = findIn('plans', id);
+      const row = p && [...state.assets, ...state.liabilities].find(r=>r.id===p.linkId);
+      if(row) row.amt = Math.round(planAUD(p)*100)/100; // keep the last figure on Net Worth
+    }
+    state[kind] = state[kind].filter(x=>x.id!==id);
+    if(kind==='assets') state.goals.forEach(g=>{ if(g.link==='asset:'+id){ g.link=''; } });
+    if(kind==='assets' || kind==='liabilities') state.plans.forEach(p=>{ if(p.linkId===id) p.linkId=''; });
+    if(kind==='expenses') state.plans.forEach(p=>{ if(p.expenseId===id) p.expenseId=''; });
+    save(); render(); return;
+  }
+  const btn = e.target.closest('[data-act]');
+  if(btn && actions[btn.dataset.act]){
+    if(actions[btn.dataset.act](btn) !== false) render();
+  }
+});
+// Press Enter/Go in an "add" box to add it
+$('#app').addEventListener('keydown', e=>{
+  if(e.key !== 'Enter') return;
+  const box = e.target.closest('[data-enter]');
+  if(box && e.target.tagName==='INPUT'){ e.preventDefault(); const act = box.dataset.enter; if(actions[act](box) !== false) render(); }
+});
+$('#app').addEventListener('toggle', e=>{
+  const d = e.target;
+  if(d.tagName==='DETAILS' && d.dataset.key){ d.open ? openDetails.add(d.dataset.key) : openDetails.delete(d.dataset.key); }
+}, true);
+
+/* ---------- Backup & restore ---------- */
+async function downloadBackup(){
+  const stamp = todayKey();
+  const json = JSON.stringify({app:'wealth-life-os', version:2, exportedAt:new Date().toISOString(), state}, null, 2);
+  const name = `wealth-life-os-backup-${stamp}.json`;
+  const markDone = msg => { state.lastBackup = new Date().toISOString(); save(); render(); toast(msg); };
+  // On phones, open the share sheet (Save to Files / AirDrop / Mail)
+  if(matchMedia('(pointer:coarse)').matches && navigator.canShare){
+    for(const type of ['application/json','text/plain']){
+      try{
+        const file = new File([json], name, {type});
+        if(navigator.canShare({files:[file]})){
+          await navigator.share({files:[file], title:'Wealth & Life OS backup'});
+          return markDone('Backup saved');
+        }
+      }catch(err){
+        if(err && err.name === 'AbortError') return; // you closed the share sheet
+      }
+    }
+  }
+  const url = URL.createObjectURL(new Blob([json], {type:'application/json'}));
+  const a = document.createElement('a'); a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 4000);
+  markDone('Backup downloaded');
+}
+function restoreFrom(file){
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const parsed = JSON.parse(reader.result);
+      const data = parsed && parsed.state ? parsed.state : parsed;
+      if(!data || typeof data !== 'object' || !('expenses' in data || 'assets' in data || 'habits' in data)) throw new Error('not a backup');
+      const when = parsed.exportedAt ? new Date(parsed.exportedAt).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}) : 'an earlier date';
+      if(!confirm(`Replace everything on this device with the backup from ${when}?`)) return;
+      state = migrate(data);
+      save(); render(); toast('Backup restored');
+    }catch(err){ toast("That file isn't a Wealth OS backup"); }
+  };
+  reader.readAsText(file);
+}
+
+/* ---------- Start ---------- */
+load();
+render();
+</script>
+</body>
+</html>
